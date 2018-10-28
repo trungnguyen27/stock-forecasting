@@ -481,10 +481,88 @@ confidence_accuracy = percentage(in_range==true)
 <p>Digging further more into the data, we see 55.65% of the time the prediction goes in the same direction of the test data, which is relieving. But the predicted decrease direction on catch 36.84% of the time. The percentage of 30.92% the predict price falls into the 80% confidence is also poor.</p>
 <p>In conclusion, after using all the default parameter of prophet, the prediction received is underperformed. In order to make the model gives out number that is feasible for the analysts to make high quality prediction, we target for the number of more than 50% of the time that both Decrease and Increase direction correctly predicted.</p>
 <p>Let's improve the model further more</p>
-<p>In time series modelling, we have a term called <strong>changepoints</strong> that refers to a time point that make the the data goes higher than expected in a specific period or season.</p>
+<p>In time series modelling, we have a term called <strong>changepoints</strong> that refers to a time point that make the the data goes higher/lower than expected in a specific period or season. A chane prior indicates how much emphasis that are given to each changepoint. This is used to control whether the data should follow the actual data as close as possible or only pick up the adjacent trends. Such phenomenals are call <code>overfitting</code> and <code>underfitting</code>. And the act of balancing between overfitting and underfitting is called <code>Bias and Variance Tradeoff</code></p>
 <p><strong>For example</strong> the sales of a heating stores can go much higher in winter than in other seasons. But in Black Friday in year 2017, the stores decided to give-away many free appliances and discounts that attract off-season buyers. This will also leads to higher sold items than any other years. The Black Friday, we call it a &quot;changepoint&quot;</p>
 <p>The good thing about prophet is that we are able to specify the changepoints that we believe to drastically affect downfall or a hike the stock price. For the easiest case, we will use the default parameters that automatically detects changepoints. We will then apply changepoint prior (or the weights that how much it will affect the increase or decrease)</p>
-<p>In Stocker, we have a function called <code>change point prior analysis</code></p>
+<p>Given a higher prior creates a model putting more weights on the changepoints and a more flexible fit. This may lead to overfitting because the model will follow the data bit by bit and fail to generalize the data. However, lowering the prior, which means make it less affected by the error, causes undefitting. Undefitting will eventually make the underline patterns left unrecognized.</p>
+<p>In Stocker, we have a function called <code>change point prior analysis</code>. With this function, we can compare many prior and its effect on the model created.</p>
+<p>The pseudo code as follow:</p>
+<pre class="hljs"><code><div>vic_stock.changepoint_prior_analysis(priors=[<span class="hljs-number">0.001</span>,<span class="hljs-number">0.05</span>,<span class="hljs-number">0.1</span>,<span class="hljs-number">0.2</span>])
+</div></code></pre>
+<p>We will have the effect of changepoint prior scales:
+<img src="Images/Changepoints analysis.png" alt="img"></p>
+<p>By using this, we can understand the effect of weight each prior puts on the overall model produced. Hence, it illustrates the underfitting versus overfitting.</p>
+<p>Observing the charts, we can see that</p>
+<ul>
+<li>The yellow line follow very closely the data (black dots)</li>
+<li>The blue line, in contrast, only catches the overall trend of the data but misses the seasonality of the dataset.</li>
+<li>The red and grey line are the average of the four.</li>
+</ul>
+<p>We also notice that:</p>
+<ul>
+<li>The lower the prior, the higher the uncertainty in the training set</li>
+<li>The higher the prior, the higher the uncertainty in the test set.</li>
+</ul>
+<p>Now that we understand the effect of the priors on the model, lets evaluate further which one gives out promising result.</p>
+<pre class="hljs"><code><div>vic_stock.changepoint_prior_validation(start_date=<span class="hljs-string">'2017-01-18'</span>, end_date=<span class="hljs-string">'2018-01-18'</span>, change_points=[<span class="hljs-number">0.001</span>,<span class="hljs-number">0.005</span>,<span class="hljs-number">0.1</span>,<span class="hljs-number">0.2</span>])
+</div></code></pre>
+<p>The validations are calculated as follow:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># interate thru each change point prior</span>
+<span class="hljs-keyword">for</span> i, prior <span class="hljs-keyword">in</span> changepoint_priors:
+    <span class="hljs-comment">#create the model</span>
+    model = create_model(prior)
+    model.fit(training_data)
+
+    future= model.predict(period = end_date - start_date)
+
+    <span class="hljs-comment"># Metrics calculation</span>
+    <span class="hljs-comment"># On the training set</span>
+    avg_train_error = avg(future - test)
+    avg_train_uncertainty = avg(future[<span class="hljs-string">'high'</span>] - future[<span class="hljs-string">'low'</span>])
+</div></code></pre>
+<p>Keep in mind that our validation data set is not the same as the testing data. If this happens, we would create the best model for the test data, but will be overfitting the test data, result in the underperformed model on the real world data.</p>
+<p>The splitted sets are :</p>
+<ul>
+<li><strong>From 2007 - 2015:</strong> training set</li>
+<li><strong>From 2015 - 2016:</strong> validation set</li>
+<li><strong>From 2016 - 2017:</strong> testing set</li>
+</ul>
+<p>From the metrics and the priors, we have the charts belows</p>
+<p>Training and testing error of each prior:
+<img src="Images/prior_validation.png" alt="img"></p>
+<p>Uncertainty of each prior:
+<img src="Images/uncertainty_prior_validation.png" alt="img"></p>
+<p>we can see that the validation does not giving much information of the direction of the prior as the trajectory goes sideway. But we can conclude that the prior of 0.5 gives the lowest error and uncertainty on both training and testing set.</p>
+<p>With such minor difference, we need to do much more than just adjusting the prior changepoints. In upcoming section of the report, we will manually adjust the changepoints that adhear to the &quot;stock culture&quot; which is <code>quarterly financial report</code>, <code>holiday seasons</code>, <code>politic news</code></p>
+<p>Buy and Hold strategy using the built model
+Since we have our prediction model, we can simmulate how the forecasts will be played in the actual market. The rules are:</p>
+<ul>
+<li>On each day, if the predicted direction is increase, we will purchase the stock on the beginning of the day, and sell at the end of the day. Otherwise, we will not buy any stock</li>
+<li>If we buy stock and the price does increase, the increase we made will be: <code>total_increase = increase * number of shares bought</code></li>
+<li>If we buy the stock and the price decreases, the money we lose will be: <code>total_lost = lost * number of shares bought</code></li>
+</ul>
+<p>Achieving by using the following line of code:</p>
+<pre class="hljs"><code><div>vic_stock.evaluate_prediction(number_of_shares=<span class="hljs-number">1000</span>)
+</div></code></pre>
+<p><img src="Images/play_buy_and_hold.png" alt="img"></p>
+<p>Imagine we have 10 000 shares of Vingroup, we will have the results:
+<img src="Images/play_buy_and_hold_text_result.png" alt="img"></p>
+<p>This is, despite being unrealistic, show that we can outplay the actual market by a fraction of money. In this case:</p>
+<ul>
+<li>Predicted result profit: 498 000 VND</li>
+<li>Buy and Hold strategy: 441 000 VND</li>
+</ul>
+<p>Correlation between Google Trend and the stock market</p>
+<p>After the poor result, we can go futher into some easier methods to find a correlations that can break the votatility of the stock market. In this section, we use Google Trend with PyTrends to find the linear correlation between the price and the number of searches.</p>
+<p>Using the keyword: 'vincom', we have the following result:
+<img src="Images/Trends_Changepoints.png" alt="img"></p>
+<p>The chart show 2 important data:</p>
+<ul>
+<li>The automatically detected changepoints: red for negative changepoint, and green for positive changepoints.</li>
+<li>The yellow columns represent the number of searches scaled to match the price columns.</li>
+</ul>
+<p>Observing the data, we can see some matching pattern between the searching rate and the actual price on the stock market.</p>
+<p>We will discover further if we can make a model out of this data.</p>
 <h4 id="15-using-modified-stocker-to-build-models-for-vn30-top-30-vnindex-stocks">1.5 Using modified Stocker to build models for VN30 (Top 30 VNIndex stocks)</h4>
 <p><strong>VN30, top 30 VNIndex, analysis</strong>
 <strong>Building additive models using <strong>Stocker For VNIndex</strong></strong></p>
