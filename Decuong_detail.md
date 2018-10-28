@@ -32,7 +32,7 @@ In organizations, forecasting made by data scientists is a common task to help w
 
 These two results in a high demand for high quality forecasts often surpass the pace at which analysts can produce them.
 
-[*Facebook Prophet*](https://research.fb.com/prophet-forecasting-at-scale/) is a forecasting tool available in Python. Iit makes the job of forecasting easier for experts and non-experts to make high quality forecasts that keep up with demand.
+[*Facebook Prophet*](https://research.fb.com/prophet-forecasting-at-scale/) is a forecasting tool available in Python. It makes the job of forecasting easier for experts and non-experts to make high quality forecasts that keep up with demand.
 
 *Forecasting at scale* implies the complexity in variety of forecasting problems, in this case, the stock market. At scale doesn't directly concern about computational power and storage as this is a straightforward problem. Building a large number of models that **scales out** to many problems made possible with Prophet. And it has been proved to be trust-worthy for decision making at Facebook.
 
@@ -60,18 +60,90 @@ Migrating from S&P300 to VNIndex consists of standardizing the dataset to match 
 
 ![img](Images/VIC_AdjClose_History.png)
 
+Above is the closing price of VIC from 2008 to 2018, nearly 10 years of data. We can also see there are some hike in 2008, 2011 and 2018. Each correlates with a turning point of event
+
 Using the 90 days period, we have the model as follow. Prophet are made using an additive model which consider a time series as a combination of an overall trend along with seasonalities on different time scales such as daily, weekly, and monthly. Create a model and making a prediction can be done with Stocker in one line:
 
 ```py
 model, model_data = vic_stock.create_prophet_model(days=90)
 ```
 
-![img](Images/90days_prophet_model.png)
+![img](Images/Model.png)
+
 
 In the above prediction, the green line contains a confidence interval representing the uncertainty in the forecast. In this case, the confidence interval is set at 80%, meaning we expect that this range will contain the actual value 80% of the time.
 Notice that at the end of the black dotted lines, the confidence interval widens as it grows further away from the history data. 
 
 Evaluate Predction
+Evaluating the accuracy of the model, we divide into two sets: the test set and the training set. Since this is a time series dataset, we cannot stochastically pick data entry on the entire dataset to create a test set. 
+In this case, we use the year of 2018 as the test set, and the rest is the training set. The idea is that, we use the training data to find the patterns and the relationships in the data from the training set. Then, we will create the predictive model using those data and use the test data of 2018 to validate our model.
+The evaluation of the prediction will consist of the followings:
+- the averaged difference between the actual price and the predicted price
+- The percentage of how often we correctly predicted the direction of the price trajectory
+- The percentage of how often the predicted price fell within the 80% confidence interval
+
+The pseudo calculation as follow:
+
+```py
+# diff is calculated as: a[i+1]-a[i]
+# < 0 means Downwards
+# > 0 means Upwards
+predicted_difference = diff(predicted_set)
+actual_difference = diff(test_set)
+
+# Average of the predicted error
+accuracy = avg(actual price - predicted price)
+
+# sign(negative_number) = -1
+# sign(positive_number) = 1
+# this line produces an array of True/False values if the predicted direction matches the actual direction
+direction_match = (sign(predicted_difference) == sign(actual_difference))
+
+increase_accuracy = percentage(direction_match > 0 == True)
+decrease_accuracy = percentage(direction_match < 0 == True)
+
+# Calculate percentage of the actual value fall into the 80% confidence
+
+in_range = test_set < predicted_set['high'] & test_set < predict_set['low']
+
+confidence_accuracy = percentage(in_range==true)
+```
+The visualization of the evaluation:
+
+![img](Images/Prediction_change_point_prior_point_5.png)
+
+Then we have the result:
+
+![img](Images/model_evaluation_result_changepoint_point_five.png)
+
+The prediction is made from 2017-10-18 to 2018-10-18, the total of 12 months. We can see that the prediction price and the actual price is very much differed (41 000 VND predicted as for 99 VND of actual price). This is concernably bad as the actual price doubled. Investment wise, the model is unworthy, even for analysis. 
+
+Digging further more into the data, we see 55.65% of the time the prediction goes in the same direction of the test data, which is relieving. But the predicted decrease direction on catch 36.84% of the time. The percentage of 30.92% the predict price falls into the 80% confidence is also poor. 
+
+In conclusion, after using all the default parameter of prophet, the prediction received is underperformed. In order to make the model gives out number that is feasible for the analysts to make high quality prediction, we target for the number of more than 50% of the time that both Decrease and Increase direction correctly predicted.
+
+Let's improve the model further more
+
+In time series modelling, we have a term called **changepoints** that refers to a time point that make the the data goes higher/lower than expected in a specific period or season. A chane prior indicates how much emphasis that are given to each changepoint. This is used to control whether the data should follow the actual data as close as possible or only pick up the adjacent trends. Such phenomenals are call `overfitting` and `underfitting`. And the act of balancing between overfitting and underfitting is called `Bias and Variance Tradeoff`
+
+**For example** the sales of a heating stores can go much higher in winter than in other seasons. But in Black Friday in year 2017, the stores decided to give-away many free appliances and discounts that attract off-season buyers. This will also leads to higher sold items than any other years. The Black Friday, we call it a "changepoint"
+
+The good thing about prophet is that we are able to specify the changepoints that we believe to drastically affect downfall or a hike the stock price. For the easiest case, we will use the default parameters that automatically detects changepoints. We will then apply changepoint prior (or the weights that how much it will affect the increase or decrease)
+
+Given a higher prior creates a model putting more weights on the changepoints and a more flexible fit. This may lead to overfitting because the model will follow the data bit by bit and fail to generalize the data. However, lowering the prior, which means make it less affected by the error, causes undefitting. Undefitting will eventually make the underline patterns left unrecognized. 
+
+In Stocker, we have a function called `change point prior analysis`. With this function, we can compare many prior and its effect on the model created.
+
+The pseudo code as follow:
+```py
+vic_stock.changepoint_prior_analysis(priors=[0.001,0.05,0.1,0.2])
+```
+
+We will have the effect of changepoint prior scales:
+![img](Images/Changepoints&#32;analysis.png)
+
+By using this, we can understand the effect of weight each prior puts on the overall model produced. Hence, it illustrates the underfitting versus overfitting.  
+
 #### 1.5 Using modified Stocker to build models for VN30 (Top 30 VNIndex stocks)
 **VN30, top 30 VNIndex, analysis**
 **Building additive models using __Stocker For VNIndex__**

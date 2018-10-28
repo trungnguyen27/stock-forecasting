@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Decuong_detail.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h1 id="vnindex-stock-price-prediction-tool-ho-chi-minh-securities-exchange">VNIndex Stock price prediction tool (Ho Chi Minh Securities Exchange)</h1>
+<h2 id="outline-detail">Outline Detail</h2>
+<h3 id="section-1-stock-price-forecasting-with-analyst-in-the-loop"><strong>Section 1: Stock Price Forecasting with Analyst in the loop</strong></h3>
+<h4 id="11-problem-proposal">1.1 Problem proposal</h4>
+<p><strong>Stock price forecasting</strong></p>
+<p>Stock price forecasting is a intimidating job as the nature of the market is volatile and strongly dependent from many aspects of the economy such as financial reports, politics and even un-official news source. Therefore, predicting the stock market is more or less a motivating challenge that data analysts are trying to break the code.</p>
+<p>In the scope of this project, we will use Facebook prophet to analyse the top 30 index from VNIndex. Prophet is a additive model enable analysts to produce faster, more flexible model using tunable paramaters. Although FBprophet has a better perfomance in modelling the forecast, it gives inferior accuracy comparing to Neural Network. However, with the votality of the stock market, FBProphet is more suitable choice for this project as it put Analyst in the loop, who can quickly create predictve time-series models and make preemptive action from such models.</p>
+<p>The main goal of this project is not to out-play the professional broker whose day-by-day job is to use their technical skills to assess the stock market, but to help them better analyse the data and visualize the prediction.</p>
+<p><strong>Problems with Vietnam stock data collecting</strong></p>
+<p>Vietnam stock market is strongly dependent from developed countries' stock markets. Most of the time, a downfall or a hike in Vietnamese Stock Market comes from Wallstreet. Therefore, predicting Vietnam Stock Market can lead to false assumption with only local data.</p>
+<p>In terms of data sources, there is a scarcity in getting a live feed of stock data as it is kept at bay at the big securities companies. Luckily, <a href="https://www.cophieu68.vn/export.php">Cophieu68</a> provide a reliable source of past trading data that can be use for modelling purposes.</p>
+<h4 id="12-applying-simple-time-series-forecasting-model-to-vic-vingroup-stock-index">1.2 Applying simple time-series forecasting model to VIC (Vingroup Stock Index)</h4>
+<p><strong>Nature of Time-series forecasting</strong>
+<strong>Holt and Winter Model</strong>
+<strong>Stock price forecasting using ARIMA (Autoregressive integrating moving average)</strong>
+<strong>Stock price forecasting using Neural Network</strong>
+<strong>Result Analysis</strong></p>
+<h4 id="13-time-series-prediction-at-scale-with-facebook-prophet-using-additive-model">1.3 Time series prediction at scale with Facebook Prophet using Additive Model</h4>
+<p><strong>Forecasting at scale with Facebook Prophet</strong>
+In organizations, forecasting made by data scientists is a common task to help with capactiy planning, goal setting and anomaly detection. However, producing reliable forecasts involves serious challenges. With time series, the mentioned task exposed with many uncertainties and biases. To better tackle above challenges, we need a tool that helps analysts create model with interpretable paramters, of high performance, and quick evaluation. There are two main themes in the practice of creating a variety of business forecasts:</p>
+<ul>
+<li>Completely automatic forecasting techniques that too often inflexible to produce useful assumption or heuristics</li>
+<li>Analysts who can produce high quality forecasts are rare because it needs substaintial knowledge and experience.</li>
+</ul>
+<p>These two results in a high demand for high quality forecasts often surpass the pace at which analysts can produce them.</p>
+<p><a href="https://research.fb.com/prophet-forecasting-at-scale/"><em>Facebook Prophet</em></a> is a forecasting tool available in Python. It makes the job of forecasting easier for experts and non-experts to make high quality forecasts that keep up with demand.</p>
+<p><em>Forecasting at scale</em> implies the complexity in variety of forecasting problems, in this case, the stock market. At scale doesn't directly concern about computational power and storage as this is a straightforward problem. Building a large number of models that <strong>scales out</strong> to many problems made possible with Prophet. And it has been proved to be trust-worthy for decision making at Facebook.</p>
+<p>Useful application of Facebook Prophets:</p>
+<ul>
+<li>hourly, daily, or weekly observations with at least a few months (preferably a year) of history</li>
+<li>strong multiple “human-scale” seasonalities: day of week and time of year</li>
+<li>important holidays that occur at irregular intervals that are known in advance (e.g. the Super Bowl)</li>
+<li>a reasonable number of missing observations or large outliers</li>
+<li>historical trend changes, for instance due to product launches or logging changes</li>
+<li>trends that are non-linear growth curves, where a trend hits a natural limit or saturates</li>
+</ul>
+<p>Prophet shines the accurate forecasts are produced by skilled forecasters, with much less effort. Due to the additive model, the results will not be produced under a blackbox from a completely automatic precedures. Prophet, on the other hand, enable Analyst with no training in time series method can improve and tweak forecasts using a variety of easily-interpretable paramters. In that case, we put the analysts in the loop.</p>
+<p><img src="./Images/Analyst_in_the_loop.png" alt="img"></p>
+<p><strong>Additive model in time-series forecasting</strong>
+<strong>Analyst in the loop with semi-automatic forecasting model.</strong></p>
+<h4 id="14-apply-stocker-a-fbprophet-stock-analysis-to-vnindex-dataset">1.4 Apply Stocker, a FBProphet stock analysis, to VNIndex dataset</h4>
+<p><strong>Stocker, an open source stock analysis tool using Facebook Prophet</strong>
+<a href="https://github.com/WillKoehrsen/Data-Analysis/tree/master/stocker">Stocker</a> is a Facebook Prophet implementation by William Koehrsen as an Stock Analysis tool for S&amp;P300 Stocks using Quandl Financial Library.<br>
+<strong>Stocker for VNIndex</strong>
+With the idea of stocker, we will apply the VNIndex stock history to produce a high quality analysis and therefore, give better forecasting decision-making assists.
+<strong>Apply Stocker To VIC (Vincom - A Vingroup Company)</strong>
+Migrating from S&amp;P300 to VNIndex consists of standardizing the dataset to match those of the US data. For the piloting process of the forecast, we will use VIC, a Vincom stock ticker to forecast its future price.</p>
+<p><img src="Images/VIC_AdjClose_History.png" alt="img"></p>
+<p>Above is the closing price of VIC from 2008 to 2018, nearly 10 years of data. We can also see there are some hike in 2008, 2011 and 2018. Each correlates with a turning point of event</p>
+<p>Using the 90 days period, we have the model as follow. Prophet are made using an additive model which consider a time series as a combination of an overall trend along with seasonalities on different time scales such as daily, weekly, and monthly. Create a model and making a prediction can be done with Stocker in one line:</p>
+<pre class="hljs"><code><div>model, model_data = vic_stock.create_prophet_model(days=<span class="hljs-number">90</span>)
+</div></code></pre>
+<p><img src="Images/Model.png" alt="img"></p>
+<p>In the above prediction, the green line contains a confidence interval representing the uncertainty in the forecast. In this case, the confidence interval is set at 80%, meaning we expect that this range will contain the actual value 80% of the time.
+Notice that at the end of the black dotted lines, the confidence interval widens as it grows further away from the history data.</p>
+<p>Evaluate Predction
+Evaluating the accuracy of the model, we divide into two sets: the test set and the training set. Since this is a time series dataset, we cannot stochastically pick data entry on the entire dataset to create a test set.
+In this case, we use the year of 2018 as the test set, and the rest is the training set. The idea is that, we use the training data to find the patterns and the relationships in the data from the training set. Then, we will create the predictive model using those data and use the test data of 2018 to validate our model.
+The evaluation of the prediction will consist of the followings:</p>
+<ul>
+<li>the averaged difference between the actual price and the predicted price</li>
+<li>The percentage of how often we correctly predicted the direction of the price trajectory</li>
+<li>The percentage of how often the predicted price fell within the 80% confidence interval</li>
+</ul>
+<p>The pseudo calculation as follow:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># diff is calculated as: a[i+1]-a[i]</span>
+<span class="hljs-comment"># &lt; 0 means Downwards</span>
+<span class="hljs-comment"># &gt; 0 means Upwards</span>
+predicted_difference = diff(predicted_set)
+actual_difference = diff(test_set)
+
+<span class="hljs-comment"># Average of the predicted error</span>
+accuracy = avg(actual price - predicted price)
+
+<span class="hljs-comment"># sign(negative_number) = -1</span>
+<span class="hljs-comment"># sign(positive_number) = 1</span>
+<span class="hljs-comment"># this line produces an array of True/False values if the predicted direction matches the actual direction</span>
+direction_match = (sign(predicted_difference) == sign(actual_difference))
+
+increase_accuracy = percentage(direction_match &gt; <span class="hljs-number">0</span> == <span class="hljs-keyword">True</span>)
+decrease_accuracy = percentage(direction_match &lt; <span class="hljs-number">0</span> == <span class="hljs-keyword">True</span>)
+
+<span class="hljs-comment"># Calculate percentage of the actual value fall into the 80% confidence</span>
+
+in_range = test_set &lt; predicted_set[<span class="hljs-string">'high'</span>] &amp; test_set &lt; predict_set[<span class="hljs-string">'low'</span>]
+
+confidence_accuracy = percentage(in_range==true)
+</div></code></pre>
+<p>The visualization of the evaluation:</p>
+<p><img src="Images/Prediction_change_point_prior_point_5.png" alt="img"></p>
+<p>Then we have the result:</p>
+<p><img src="Images/model_evaluation_result_changepoint_point_five.png" alt="img"></p>
+<p>The prediction is made from 2017-10-18 to 2018-10-18, the total of 12 months. We can see that the prediction price and the actual price is very much differed (41 000 VND predicted as for 99 VND of actual price). This is concernably bad as the actual price doubled. Investment wise, the model is unworthy, even for analysis.</p>
+<p>Digging further more into the data, we see 55.65% of the time the prediction goes in the same direction of the test data, which is relieving. But the predicted decrease direction on catch 36.84% of the time. The percentage of 30.92% the predict price falls into the 80% confidence is also poor.</p>
+<p>In conclusion, after using all the default parameter of prophet, the prediction received is underperformed. In order to make the model gives out number that is feasible for the analysts to make high quality prediction, we target for the number of more than 50% of the time that both Decrease and Increase direction correctly predicted.</p>
+<p>Let's improve the model further more</p>
+<p>In time series modelling, we have a term called <strong>changepoints</strong> that refers to a time point that make the the data goes higher than expected in a specific period or season.</p>
+<p><strong>For example</strong> the sales of a heating stores can go much higher in winter than in other seasons. But in Black Friday in year 2017, the stores decided to give-away many free appliances and discounts that attract off-season buyers. This will also leads to higher sold items than any other years. The Black Friday, we call it a &quot;changepoint&quot;</p>
+<p>The good thing about prophet is that we are able to specify the changepoints that we believe to drastically affect downfall or a hike the stock price. For the easiest case, we will use the default parameters that automatically detects changepoints. We will then apply changepoint prior (or the weights that how much it will affect the increase or decrease)</p>
+<p>In Stocker, we have a function called <code>change point prior analysis</code></p>
+<h4 id="15-using-modified-stocker-to-build-models-for-vn30-top-30-vnindex-stocks">1.5 Using modified Stocker to build models for VN30 (Top 30 VNIndex stocks)</h4>
+<p><strong>VN30, top 30 VNIndex, analysis</strong>
+<strong>Building additive models using <strong>Stocker For VNIndex</strong></strong></p>
+<h3 id="section-2-deploy-stocker-for-vnindex"><strong>Section 2: Deploy Stocker For VNIndex</strong></h3>
+<h4 id="21-stock-forecast-application-built-with-analyst-in-the-loop">2.1 Stock Forecast Application built with Analyst in the loop</h4>
+<p><strong>Feasibility</strong>
+The Technology stack
+Design Layout
+Target
+Audiences
+Functionality</p>
+<h4 id="22-system-specification">2.2 System Specification</h4>
+<p>Data
+Use cases
+Sequential Chart</p>
+<h4 id="22-apply-reactjs-framework-to-boost-development-process">2.2 Apply ReactJS Framework to boost development process</h4>
+<h4 id="23-deploy-vnstocker-to-the-backend-stack">2.3 Deploy VNStocker to the backend stack</h4>
+<h4 id="24-feedbacks-from-a-stock-broker">2.4 Feedbacks from a Stock Broker</h4>
+
+</body>
+</html>
