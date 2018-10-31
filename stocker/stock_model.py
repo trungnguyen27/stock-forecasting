@@ -82,56 +82,48 @@ class SModel():
         
         return model
 
-    def predict(self, use_moving_avg = False, days = 30, training_years = 1):
+    def predict(self, use_moving_avg = False, days = 30):
         # Use past self.training_years years for training
-        training_sets = dict()
+        futures = dict()
         if use_moving_avg:
-            for i, lag in enumerate(self.lags):
-                ma_set = pd.DataFrame(columns=['y', 'ds', 'label'])
-                ma_set['y'] = self.moving_averages['ma_{}'.format(lag)]
-                ma_set['ds'] = self.stock['ds']
-                training_sets['ma_{}'.format(lag)] = ma_set
+            lags = self.moving_averages['lags']
+            futures['lags']= lags
+            for i, (key, value) in enumerate(self.moving_averages.items()):
+                if key == 'lags':
+                    continue
+                predicted = pd.DataFrame()
+                for lag in lags:
+                    d = {'ds': value['ds'], 'y': value['ma_%d' %lag]}
+                    train_set = pd.DataFrame(data=d)
+                    result = self.predict_single_dataset(train=train_set, days=days)
+
+                    # Rename the columns for presentation
+                      # Rename the columns for presentation
+                    renamed = result['predicted'].rename(columns={'yhat': 'estimate_%d' %lag, 'diff': 'change_%d' %lag, 
+                                        'yhat_upper': 'upper_%d' %lag, 'yhat_lower': 'lower_%d' %lag})
+                    if predicted.empty:
+                        predicted = renamed
+                    else:
+                        predicted = pd.merge(predicted, renamed, on = 'ds', how = 'inner')
+                    # value['increases_%d' %lag] = result[result['predicted']['direction'] ==1]
+                    # value['decreases_%d' %lag] = result[result['predicted']['direction'] ==0]
+                futures[key] = predicted
         else:
             self.stock['y'] = self.stock['Close']
             training_sets['ma_0']= self.stock
+        self.futures = futures
+        # self.training_sets = training_sets
         
-        self.training_sets = training_sets
-        
-        #train = self.stock[self.stock['Date'] > (max(self.stock['Date']) - pd.DateOffset(years=training_years)).date()]
-        plt.style.use('seaborn')
-        futures_dict = dict()
-        predictions_dict = dict()
-        future_increases = dict()
-        future_decreases = dict()
-        for i, (key, training_set) in enumerate(training_sets.items()):
-            model = self.build_model()
-            model.fit(training_set)
-        
-            # Future dataframe with specified number of days to predict
-            predicted = model.make_future_dataframe(periods=days, freq='D')
-            predicted = model.predict(predicted)
-            # Only concerned with future dates
-            future = predicted[predicted['ds'] >= max(self.stock['Date']).date()]
-        
-            # Remove the weekends
-            #future = self.remove_weekends(future)
-            
-            # Calculate whether increase or not
-            future['diff'] = future['yhat'].diff()
-        
-            future = future.dropna()
+        # #train = self.stock[self.stock['Date'] > (max(self.stock['Date']) - pd.DateOffset(years=training_years)).date()]
+        # plt.style.use('seaborn')
+       
+        # self.predictions = predictions_dict
+        # self.future_increases= future_increases
+        # self.future_decreases = future_decreases
+        self.plot_history_and_prediction()
+        # for i, (key, training_set) in enumerate(training_sets.items()):
+        #     result = self.predict_single_dataset()
 
-            # Find the prediction direction and create separate dataframes
-            future['direction'] = (future['diff'] > 0) * 1
-            
-            # Rename the columns for presentation
-            future = future.rename(columns={'ds': 'Date', 'yhat': 'estimate', 'diff': 'change', 
-                                            'yhat_upper': 'upper', 'yhat_lower': 'lower'})
-            
-            futures_dict[key] = future
-            predictions_dict[key] = predicted
-            future_increases[key] = future[future['direction'] == 1]
-            future_decreases[key] = future[future['direction'] == 0]
 
             # # Print out the dates
             # print('\nPredicted Increase: \n')
@@ -139,23 +131,53 @@ class SModel():
             
             # print('\nPredicted Decrease: \n')
             # print(self.future_decrease[['Date', 'estimate', 'change', 'upper', 'lower']])
-            self.futures = futures_dict
-            self.predictions = predictions_dict
-            self.future_increases= future_increases
-            self.future_decreases = future_decreases
-        self.plot_history_and_prediction()
+            
+        
+    def predict_single_dataset(self, train, days):
+        model = self.build_model()
+        model.fit(train)
     
+        # Future dataframe with specified number of days to predict
+        predicted = model.make_future_dataframe(periods=days, freq='D')
+        predicted = model.predict(predicted)
+        # Only concerned with future dates
+        future = predicted[predicted['ds'] >= max(self.stock['Date']).date()]
+    
+        # Remove the weekends
+        #future = self.remove_weekends(future)
+        
+        # Calculate whether increase or not
+        predicted['diff'] = predicted['yhat'].diff()
+        future['diff'] = future['yhat'].diff()
+    
+        future = future.dropna()
+
+        # Find the prediction direction and create separate dataframes
+        future['direction'] = (future['diff'] > 0) * 1
+        predicted['direction'] = (predicted['diff']> 0) *1
+        result = dict()
+        result['predicted'] = predicted 
+        result['future'] = future
+        return result
+
     def plot_history_and_prediction(self):
         self.reset_plot()
         plt.title('Predicted Price on Close Price and Moving Averages on {}'.format(self.symbol))
-        for (key, predicted) in self.predictions.items():
-            history_range = predicted[predicted['ds'] < max(self.stock['ds'])]
-            plt.plot(history_range['ds'], history_range['yhat'], label=key)
-            plt.plot(self.futures[key]['Date'], self.futures[key]['estimate'], label='predicted {}'.format(key))
-            # Plot the uncertainty interval
-            plt.fill_between(predicted['ds'].dt.to_pydatetime(), predicted['yhat_upper'],
-                                predicted['yhat_lower'],
-                                alpha = 0.3, edgecolor = 'k', linewidth = 0.6)
+        lags = self.moving_averages['lags']
+        for (key, future) in self.futures.items():
+            if key == 'lags':
+                continue
+
+            for lag in lags:
+                history_range = future[future['ds'] < max(self.stock['ds'])]
+                future_range = future[future['ds'] > max(self.stock['ds'])]
+                plt.plot(history_range['ds'], history_range['estimate_%d' %lag], label=key)
+                plt.plot(future_range['ds'], future_range['estimate_%d' %lag], label='predicted %d' %lag)
+                
+                # Plot the uncertainty interval
+                plt.fill_between(future['ds'].dt.to_pydatetime(), future['upper_%d' %lag],
+                                    future['lower_%d' %lag],
+                                    alpha = 0.3, edgecolor = 'k', linewidth = 0.6)
 
         plt.legend(loc='best')
         plt.show()
