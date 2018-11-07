@@ -254,7 +254,7 @@ class Stocker():
             # Percentage y-axis
             if plot_type == 'pct':
                 # Simple Plot 
-                plt.style.use('fivethirtyeight');
+                plt.style.use('fivethirtyeight') 
                 if stat == 'Daily Change':
                     plt.plot(stock_plot['Date'], 100 * stock_plot[stat],
                          color = colors[i], linewidth = 2.4, alpha = 0.9,
@@ -264,19 +264,21 @@ class Stocker():
                          color = colors[i], linewidth = 2.4, alpha = 0.9,
                          label = stat)
 
-                plt.xlabel('Date'); plt.ylabel('Change Relative to Average (%)'); plt.title('%s Stock History' % self.symbol); 
+                plt.xlabel('Date')  
+                plt.ylabel('Change Relative to Average (%)')  
+                plt.title('%s Stock History' % self.symbol)  
                 plt.legend(prop={'size':10})
-                plt.grid(color = 'k', alpha = 0.4); 
+                plt.grid(color = 'k', alpha = 0.4)  
 
             # Stat y-axis
             elif plot_type == 'basic':
-                plt.style.use('fivethirtyeight');
+                plt.style.use('fivethirtyeight') 
                 plt.plot(stock_plot['Date'], stock_plot[stat], color = colors[i], linewidth = 3, label = stat, alpha = 0.8)
-                plt.xlabel('Date'); plt.ylabel('VND'); plt.title('%s Stock History' % self.symbol); 
+                plt.xlabel('Date')  plt.ylabel('VND')  plt.title('%s Stock History' % self.symbol)  
                 plt.legend(prop={'size':10})
-                plt.grid(color = 'k', alpha = 0.4); 
+                plt.grid(color = 'k', alpha = 0.4)  
       
-        plt.show();
+        plt.show() 
         
     # Reset the plotting parameters to clear style formatting
     # Not sure if this should be a static method
@@ -352,7 +354,7 @@ class Stocker():
         
         # Plot the profits over time
         plt.plot(profits['Date'], profits['hold_profit'], 'b', linewidth = 3)
-        plt.ylabel('Profit (VNĐ)'); plt.xlabel('Date'); plt.title('Buy and Hold Profits for {} {} to {}'.format(
+        plt.ylabel('Profit (VNĐ)')  plt.xlabel('Date')  plt.title('Buy and Hold Profits for {} {} to {}'.format(
                                                                 self.symbol, start_date.date(), end_date.date()))
         
         # Display final value on graph
@@ -363,7 +365,7 @@ class Stocker():
             size = 14)
         
         plt.grid(alpha=0.2)
-        plt.show();
+        plt.show() 
         
     # Create a prophet model without training
     def create_model(self):
@@ -433,7 +435,7 @@ class Stocker():
                             
         # Plot labels
         plt.legend(loc = 2, prop={'size': 10})
-        plt.xlabel('Date'); plt.ylabel('Stock Price (VNĐ)'); plt.title('Effect of Changepoint Prior Scale');
+        plt.xlabel('Date')  plt.ylabel('Stock Price (VNĐ)')  plt.title('Effect of Changepoint Prior Scale') 
         plt.show()
             
     # Basic prophet model for specified number of days  
@@ -471,16 +473,16 @@ class Stocker():
         ax.plot(stock_history['ds'], stock_history['y'], 'ko-', linewidth = 1.4, alpha = 0.8, ms = 1.8, label = 'Observations')
         
         # Plot the predicted values
-        ax.plot(future['ds'], future['yhat'], 'forestgreen',linewidth = 2.4, label = 'Modeled');
+        ax.plot(future['ds'], future['yhat'], 'forestgreen',linewidth = 2.4, label = 'Modeled') 
 
         # Plot the uncertainty interval as ribbon
         ax.fill_between(future['ds'].dt.to_pydatetime(), future['yhat_upper'], future['yhat_lower'], alpha = 0.3, 
                        facecolor = 'g', edgecolor = 'k', linewidth = 1.4, label = 'Confidence Interval')
 
         # Plot formatting
-        plt.legend(loc = 2, prop={'size': 10}); plt.xlabel('Date'); plt.ylabel('Price VNĐ');
+        plt.legend(loc = 2, prop={'size': 10})  plt.xlabel('Date')  plt.ylabel('Price VNĐ') 
         plt.grid(linewidth=0.6, alpha = 0.6)
-        plt.title(title);
+        plt.title(title) 
         plt.show()
         
         return model, future
@@ -575,7 +577,7 @@ class Stocker():
             ax.plot(test['ds'], test['y'], 'ko-', linewidth = 1.4, alpha = 0.8, ms = 1.8, label = 'Observations')
             
             # Plot the predicted values
-            ax.plot(future['ds'], future['yhat'], 'navy', linewidth = 2.4, label = 'Predicted');
+            ax.plot(future['ds'], future['yhat'], 'navy', linewidth = 2.4, label = 'Predicted') 
 
             # Plot the uncertainty interval as ribbon
             ax.fill_between(future['ds'].dt.to_pydatetime(), future['yhat_upper'], future['yhat_lower'], alpha = 0.6, 
@@ -586,12 +588,12 @@ class Stocker():
                        linestyles='dashed', label = 'Prediction Start')
 
             # Plot formatting
-            plt.legend(loc = 2, prop={'size': 8}); plt.xlabel('Date'); plt.ylabel('Price VNĐ');
+            plt.legend(loc = 2, prop={'size': 8})  plt.xlabel('Date')  plt.ylabel('Price VNĐ') 
             plt.grid(linewidth=0.6, alpha = 0.6)
                        
             plt.title('{} Model Evaluation from {} to {}.'.format(self.symbol,
-                start_date.date(), end_date.date()));
-            plt.show();
+                start_date.date(), end_date.date())) 
+            plt.show() 
 
         
         # If a number of shares is specified, play the game
@@ -670,13 +672,13 @@ class Stocker():
                      y =  final_smart + (final_smart / 40),
                      s = 'VNĐ%d' % final_smart,
                     color = 'g' if final_smart > 0 else 'r',
-                    size = 18);
+                    size = 18) 
 
             # Plot formatting
-            plt.ylabel('Profit  (US VNĐ)'); plt.xlabel('Date'); 
-            plt.title('Predicted versus Buy and Hold Profits');
-            plt.legend(loc = 2, prop={'size': 10});
-            plt.grid(alpha=0.2); 
+            plt.ylabel('Profit  (US VNĐ)')  plt.xlabel('Date')  
+            plt.title('Predicted versus Buy and Hold Profits') 
+            plt.legend(loc = 2, prop={'size': 10}) 
+            plt.grid(alpha=0.2)  
             plt.show()
         
     def retrieve_google_trends(self, search, date_range):
@@ -763,8 +765,8 @@ class Stocker():
                        linestyles='dashed', color = 'darkgreen', 
                        linewidth= 1.2, label='Positive Changepoints')
 
-            plt.legend(prop={'size':10});
-            plt.xlabel('Date'); plt.ylabel('Price (VNĐ)'); plt.title('Stock Price with Changepoints')
+            plt.legend(prop={'size':10}) 
+            plt.xlabel('Date')  plt.ylabel('Price (VNĐ)')  plt.title('Stock Price with Changepoints')
             plt.show()
         
         # Search for search term in google news
@@ -819,7 +821,7 @@ class Stocker():
 
             # Plot formatting
             plt.legend(prop={'size': 10})
-            plt.xlabel('Date'); plt.ylabel('Normalized Values'); plt.title('%s Stock Price and Search Frequency for %s' % (self.symbol, search))
+            plt.xlabel('Date')  plt.ylabel('Normalized Values')  plt.title('%s Stock Price and Search Frequency for %s' % (self.symbol, search))
             plt.show()
         
     # Predict the future price for a given range of days
@@ -887,10 +889,10 @@ class Stocker():
                    ecolor='darkblue', capsize = 4, elinewidth = 1, label = 'Pred with Range')
 
         # Plot formatting
-        plt.legend(loc = 2, prop={'size': 10});
+        plt.legend(loc = 2, prop={'size': 10}) 
         plt.xticks(rotation = '45')
-        plt.ylabel('Predicted Stock Price (US VNĐ)');
-        plt.xlabel('Date'); plt.title('Predictions for %s' % self.symbol);
+        plt.ylabel('Predicted Stock Price (US VNĐ)') 
+        plt.xlabel('Date')  plt.title('Predictions for %s' % self.symbol) 
         plt.show()
         
     def changepoint_prior_validation(self, start_date=None, end_date=None,changepoint_priors = [0.001, 0.05, 0.1, 0.2]):
@@ -964,21 +966,21 @@ class Stocker():
         
         plt.plot(results['cps'], results['train_err'], 'bo-', ms = 8, label = 'Train Error')
         plt.plot(results['cps'], results['test_err'], 'r*-', ms = 8, label = 'Test Error')
-        plt.xlabel('Changepoint Prior Scale'); plt.ylabel('Avg. Absolute Error (VNĐ)');
+        plt.xlabel('Changepoint Prior Scale')  plt.ylabel('Avg. Absolute Error (VNĐ)') 
         plt.title('Training and Testing Curves as Function of CPS')
         plt.grid(color='k', alpha=0.3)
         plt.xticks(results['cps'], results['cps'])
         plt.legend(prop={'size':10})
-        plt.show();
+        plt.show() 
         
         # Plot of training and testing average uncertainty
         self.reset_plot()
 
         plt.plot(results['cps'], results['train_range'], 'bo-', ms = 8, label = 'Train Range')
         plt.plot(results['cps'], results['test_range'], 'r*-', ms = 8, label = 'Test Range')
-        plt.xlabel('Changepoint Prior Scale'); plt.ylabel('Avg. Uncertainty (VNĐ)');
+        plt.xlabel('Changepoint Prior Scale')  plt.ylabel('Avg. Uncertainty (VNĐ)') 
         plt.title('Uncertainty in Estimate as Function of CPS')
         plt.grid(color='k', alpha=0.3)
         plt.xticks(results['cps'], results['cps'])
         plt.legend(prop={'size':10})
-        plt.show();
+        plt.show() 
