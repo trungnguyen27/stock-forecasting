@@ -1,5 +1,5 @@
-from stock_model import SModel
-from financial_data import FinancialData
+from stocker_logic.stock_model import SModel
+from stock_database.financial_data import FinancialData
 
 stock = FinancialData(ticker="VIC")
 stock.describe_stock()

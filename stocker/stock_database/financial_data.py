@@ -5,13 +5,16 @@ from sklearn.preprocessing import MinMaxScaler
 # matplotlib pyplot for plotting
 import matplotlib.pyplot as plt
 import matplotlib
+from global_configs import configs
 warnings.filterwarnings('ignore')
+
+csv_path = configs['csv_path']
 
 class FinancialData():
     currency = '000VND'
     def __init__(self, ticker = "VIC"):
         self.ticker = ticker.capitalize()
-        data = pd.read_csv('./index_database/excel_vic.csv', parse_dates=[1])
+        data = pd.read_csv('%s/excel_vic.csv'%csv_path, parse_dates=[1])
         data.columns=["Ticker","Date","OpenFixed","HighFixed","LowFixed","CloseFixed","Volume","Open","High","Low","Close","VolumeDeal","VolumeFB","VolumeFS"]
         data.Timestamp=pd.to_datetime(data.Date, format='%d-%m-%Y %H:%M')
         data.index = data.Timestamp

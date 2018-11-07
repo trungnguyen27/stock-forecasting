@@ -6,7 +6,7 @@ from pytrends.request import TrendReq
 # matplotlib pyplot for plotting
 import matplotlib.pyplot as plt
 import matplotlib
-from financial_data import FinancialData
+from stock_database.financial_data import FinancialData
 from sklearn.preprocessing import MinMaxScaler
 import datetime
 

@@ -2,13 +2,12 @@ from flask import Flask, jsonify
 from flask import request
 import pickle
 from global_configs import configs
-from stocker_server.stocker_logic.stock_model import SModel
-from stocker_server.stock_database.financial_data import FinancialData
-
+from stocker_logic.stock_model import SModel
+from stock_database.financial_data import FinancialData
 
 #code which helps initialize our server
 app =  Flask(__name__)
-model_path = configs['exported_model_path']
+model_path = configs['model_path']
 
 model = pickle.load(open("%s/prophet_model_MA_1_Close.pkl" %model_path, "rb"))
 stock = FinancialData(ticker="VIC")

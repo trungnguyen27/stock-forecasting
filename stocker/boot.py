@@ -1,7 +1,3 @@
-from global_configs import configs
-import sys, os
+from stocker_server.flask_test import app
 
-class boot():
-    def __init__(self):
-        for key, path in configs.items():
-            sys.path.append(path)
+app.run()
