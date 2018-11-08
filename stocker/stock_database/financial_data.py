@@ -6,18 +6,25 @@ from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 import matplotlib
 from global_configs import configs
+from stock_database.parse_csv import Migration
+
 warnings.filterwarnings('ignore')
 
 csv_path = configs['csv_path']
+metastock_name = configs['metastock_name']
+migration = Migration()
 
 class FinancialData():
     currency = '000VND'
     def __init__(self, ticker = "VIC"):
+        #["Ticker","Date","OpenFixed","HighFixed","LowFixed","CloseFixed","Volume","Open","High","Low","Close","VolumeDeal","VolumeFB","VolumeFS"]
         self.ticker = ticker.capitalize()
-        data = pd.read_csv('%s/excel_vic.csv'%csv_path, parse_dates=[1])
-        data.columns=["Ticker","Date","OpenFixed","HighFixed","LowFixed","CloseFixed","Volume","Open","High","Low","Close","VolumeDeal","VolumeFB","VolumeFS"]
-        data.Timestamp=pd.to_datetime(data.Date, format='%d-%m-%Y %H:%M')
-        data.index = data.Timestamp
+        data = migration.get_data(ticker=ticker)
+        # data = data[(data['Ticker']== ticker)]
+        data.columns=["Id", "Ticker","Date","Open", "High", "Low", "Close", "Volume"]
+        data['Date']=pd.to_datetime(data.Date)
+        #data.Timestamp= data['']
+        data.index = data['Date']
         data = data.sort_values(by=['Date'], ascending=[True])
         data = data.resample('D').fillna(method='ffill')
 
@@ -49,30 +56,40 @@ class FinancialData():
         # The most recent price
         self.most_recent_price = float(self.data.ix[len(self.data) - 1, 'y'])
 
-    def get_data(self):
+    # Get the data from start date until the last record
+    def get_data(self, start_date):
         if self.data.empty:
             print ('Stock data is empty')
             return
         else:
             print('Stock History Data of %s' %(self.ticker))
-            return self.data
+            if not start_date:
+                return self.data
+            else:
+                result = self.data[(self.data['ds'] > start_date)]
+            return result.dropna()
 
     def describe_stock(self):
         print(self.data.head())
         print('%d years of %s stock history data \n[%s To %s]' %(self.years, self.ticker, self.min_date, self.max_date))
         print('Lowest price on: %s with %d %s\nHighest price on: %s with %d %s' %(self.min_price_date, self.min_price, self.currency, self.max_price_date, self.max_price, self.currency))
 
-    def get_moving_averages(self, lags = [30], columns=['Close']):
+
+    def get_moving_averages(self, lags = [5], columns=['Close'], start_date=None):
         # ing_averages= pd.DataFrame()
         moving_averages = dict()
-
+        print('LAGS:', lags)
+        filtered_data= self.data.copy()
+        if start_date:
+            filtered_data = filtered_data[(self.data['ds'] > start_date)]
         # with each columns, we calculate the moving average with lags
         for column in columns:
             try:
                 for i, lag in enumerate(lags):
-                    data = self.data[['ds', column]]
+                    data = filtered_data[['ds', column]]
                     data = data.rename(columns = {column: 'y'})
-                    data['y'] = data['y'].rolling(lag).mean()
+                    data['y'] = data['y'].rolling(lag).mean().round(2)
+                    data = data.dropna()
                     moving_averages['MA_%d_%s' %(lag, column)] = data
             except Exception as e:
                 print('An error occured:')
@@ -85,10 +102,10 @@ class FinancialData():
         for lag in lags:
             lags_str += str(lag) + ' '
         print('Moving averages generated: [{}] on columns [{}]'.format(lags_str, '-'.join(columns)))
+
         return moving_averages
 
-    def plot_stock(self, columns=['Close'], show_data=True, show_volume=False, moving_averages = [1]):
-        moving_averages = self.get_moving_averages(lags = moving_averages, columns=columns)
+    def plot_stock(self, columns=['Close'], show_data=True, show_volume=False, moving_averages = None):
         self.reset_plot()
         colors = ['r', 'b', 'g', 'y', 'c', 'm']
         plt.style.use('seaborn')
@@ -107,7 +124,6 @@ class FinancialData():
         if moving_averages:
             for (col, avg) in moving_averages.items():
                 plt.plot(avg['ds'], avg['y'] , ls='--', label = col)
-                    
                 
         #plt.plot(self.data['ds'], moving_avg, color='powderblue')
         plt.title('{} on {}'.format(self.ticker, ' '.join(columns)))

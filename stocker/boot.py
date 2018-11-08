@@ -1,3 +1,3 @@
 from stocker_server.flask_test import app
 
-app.run()
+app.run(debug=False)

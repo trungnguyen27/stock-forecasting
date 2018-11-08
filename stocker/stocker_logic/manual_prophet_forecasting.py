@@ -1,17 +1,26 @@
 from stocker_logic.stock_model import SModel
 from stock_database.financial_data import FinancialData
+from global_configs import configs
+import pandas as pd
 
-stock = FinancialData(ticker="VIC")
+stock = FinancialData(ticker="VNM")
 stock.describe_stock()
 
-lags = [1]
+stock.plot_stock()
+
+lags = [1, 30]
 days = 7
 
-mas = stock.get_moving_averages(lags = lags, columns=['Volume'])
+mas = stock.get_moving_averages(lags = lags, columns=['Close'])
 
-stock.plot_stock(show_data = True, show_volume=True, moving_averages=mas)
+stock.plot_stock(show_data = False, show_volume=True, moving_averages=mas)
 
 smodel = SModel(stock=stock)
+
+smodel.predict(training_sets=mas,days = 90)
+smodel.plot_predictions()
+smodel.plot_detail_prediction()
+
 changepoints = smodel.changepoint_date_analysis(training_sets=mas)
 print(changepoints)
 smodel.intialize_model_parameters(changepoints = changepoints, changepoint_prior_scale=0.5)
@@ -23,9 +32,7 @@ smodel.evaluate_prediction(mas)
 # mas['actual'] = stock.get_data()
 # smodel.evaluate_prediction(training_sets=mas)
 
-smodel.predict(training_sets=mas,days = 30)
-smodel.plot_predictions()
-smodel.plot_detail_prediction()
+
 # smodel.set_moving_averages(lags=[90], columns=['Close'])
 # #smodel.plot_stock(show_data=False, show_moving_avg=True, show_volume=True)
 # #smodel.predict(use_moving_avg=True, days = 90)
