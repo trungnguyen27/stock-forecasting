@@ -29,7 +29,7 @@ class Price_History(Base):
 
 class Migration():
     def __init__(self):
-        if not database_exists('sqlite:///%s' %sql_path):
+        if not database_exists('postgresql:///%s' %sql_path):
             # data = pd.read_csv('%s/%s.csv' %(csv_path, metastock_name), parse_dates=[1], usecols = [0,1,2,3,4,5,6])
             # #data=data[data.columns[:7]]
             # print(data.describe())

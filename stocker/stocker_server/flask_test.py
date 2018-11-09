@@ -1,6 +1,7 @@
-from flask import Flask, jsonify
+from flask import jsonify
 from flask import request
-from flask_restful import Resource, Api
+from flask_restful import Resource
+from stocker_server import api
 import pickle
 from global_configs import configs
 from stocker_logic.stock_model import SModel
@@ -11,16 +12,9 @@ import json
 data_endpoint = endpoints['price_data']
 ma_endpoint = endpoints['moving_average_data']
 
-#code which helps initialize our server
-app =  Flask(__name__)
-api = Api(app)
+
 model_path = configs['model_path']
 
-class JSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, 'to_json'):
-            return obj.to_json(orient='records')
-        return json.JSONEncoder.default(self, obj)
 
 model = pickle.load(open("%s/prophet_model_MA_1_Close.pkl" %model_path, "rb"))
 class PriceData(Resource):
